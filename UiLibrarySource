@@ -1,0 +1,73 @@
+local Library = {}
+
+function Library:CreateWindow(name)
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = name
+    ScreenGui.Parent = game.CoreGui
+
+    local Frame = Instance.new("Frame")
+    Frame.Parent = ScreenGui
+    Frame.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+    Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    Frame.BorderSizePixel = 2
+    Frame.Position = UDim2.new(0.378543168, 0, 0.209876537, 0)
+    Frame.Size = UDim2.new(0, 493, 0, 358)
+    Frame.Active = true
+    Frame.Draggable = true
+
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.Parent = Frame
+    TextLabel.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+    TextLabel.BorderSizePixel = 0
+    TextLabel.Size = UDim2.new(0, 493, 0, 50)
+    TextLabel.Font = Enum.Font.Arial
+    TextLabel.Text = name
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextScaled = true
+    TextLabel.TextSize = 14.000
+    TextLabel.TextStrokeTransparency = 0.000
+    TextLabel.TextWrapped = true
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Parent = Frame
+    closeButton.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+    closeButton.BorderColor3 = Color3.fromRGB(27, 42, 53)
+    closeButton.Position = UDim2.new(0.916279852, 0, 0.0124767423, 0)
+    closeButton.Size = UDim2.new(0, 35, 0, 41)
+    closeButton.Font = Enum.Font.Arial
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.TextScaled = true
+    closeButton.TextSize = 29.000
+    closeButton.TextStrokeTransparency = 0.000
+    closeButton.TextWrapped = true
+    closeButton.MouseButton1Click:Connect(function()
+        Frame.Visible = false
+    end)
+
+    local window = {}
+    function window:CreateCheckbox(text, callback)
+        local checkbox = Instance.new("TextButton")
+        checkbox.Parent = Frame
+        checkbox.BackgroundColor3 = Color3.fromRGB(30, 46, 56)
+        checkbox.BorderColor3 = Color3.fromRGB(27, 42, 53)
+        checkbox.Position = UDim2.new(0.0156712532, 0, 0.157728136, 0)
+        checkbox.Size = UDim2.new(0, 190, 0, 53)
+        checkbox.Font = Enum.Font.Arial
+        checkbox.Text = text
+        checkbox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        checkbox.TextSize = 29.000
+        checkbox.TextStrokeTransparency = 0.000
+        checkbox.TextWrapped = true
+
+        local toggled = false
+        checkbox.MouseButton1Click:Connect(function()
+            toggled = not toggled
+            callback(toggled)
+        end)
+    end
+
+    return window
+end
+
+return Library
