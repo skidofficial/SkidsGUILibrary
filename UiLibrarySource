@@ -2,6 +2,7 @@ local Library = {
     Flags = {},
     DefaultColor = Color3.fromRGB(0, 170, 255)  -- Customize as needed
 }
+local TweenService = game:GetService("TweenService") -- Ensure TweenService is referenced
 
 function Library:CreateWindow(name)
     local ScreenGui = Instance.new("ScreenGui")
