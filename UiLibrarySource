@@ -49,7 +49,7 @@ function Library:CreateWindow(name)
     function window:CreateCheckbox(text, callback)
         local checkbox = Instance.new("TextButton")
         checkbox.Parent = Frame
-        checkbox.BackgroundColor3 = Color3.fromRGB(30, 46, 56)
+        checkbox.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Initially red
         checkbox.BorderColor3 = Color3.fromRGB(27, 42, 53)
         checkbox.Position = UDim2.new(0.0156712532, 0, 0.157728136, 0)
         checkbox.Size = UDim2.new(0, 190, 0, 53)
@@ -63,6 +63,7 @@ function Library:CreateWindow(name)
         local toggled = false
         checkbox.MouseButton1Click:Connect(function()
             toggled = not toggled
+            checkbox.BackgroundColor3 = toggled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0) -- Green if true, red if false
             callback(toggled)
         end)
     end
