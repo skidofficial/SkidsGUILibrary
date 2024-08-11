@@ -1,4 +1,7 @@
-local Library = {}
+local Library = {
+    Flags = {},
+    DefaultColor = Color3.fromRGB(0, 170, 255)  -- Customize as needed
+}
 
 function Library:CreateWindow(name)
     local ScreenGui = Instance.new("ScreenGui")
@@ -46,26 +49,114 @@ function Library:CreateWindow(name)
     end)
 
     local window = {}
-    function window:CreateCheckbox(text, callback)
-        local checkbox = Instance.new("TextButton")
-        checkbox.Parent = Frame
-        checkbox.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Initially red
-        checkbox.BorderColor3 = Color3.fromRGB(27, 42, 53)
-        checkbox.Position = UDim2.new(0.0156712532, 0, 0.157728136, 0)
-        checkbox.Size = UDim2.new(0, 190, 0, 53)
-        checkbox.Font = Enum.Font.Arial
-        checkbox.Text = text
-        checkbox.TextColor3 = Color3.fromRGB(255, 255, 255)
-        checkbox.TextSize = 29.000
-        checkbox.TextStrokeTransparency = 0.000
-        checkbox.TextWrapped = true
+    function window:Toggle(Info)
+        Info.Text = Info.Text or "Toggle"
+        Info.Flag = Info.Flag or Info.Text
+        Info.Default = Info.Default or false
+        Info.Callback = Info.Callback or function() end
 
-        local toggled = false
-        checkbox.MouseButton1Click:Connect(function()
-            toggled = not toggled
-            checkbox.BackgroundColor3 = toggled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0) -- Green if true, red if false
-            callback(toggled)
+        local insidetoggle = {}
+        Library.Flags[Info.Flag] = Info.Default
+
+        local Toggled = Info.Default
+
+        local toggle = Instance.new("Frame")
+        toggle.Name = "Toggle"
+        toggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
+        toggle.Size = UDim2.fromOffset(225, 38)
+        toggle.Parent = Frame
+
+        local uICorner = Instance.new("UICorner")
+        uICorner.CornerRadius = UDim.new(0, 4)
+        uICorner.Parent = toggle
+
+        local fixLineToggle = Instance.new("Frame")
+        fixLineToggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
+        fixLineToggle.BorderSizePixel = 0
+        fixLineToggle.Position = UDim2.fromScale(0.5, 0.0526)
+        fixLineToggle.Size = UDim2.fromOffset(225, 4)
+        fixLineToggle.Parent = toggle
+
+        local toggleTextButton = Instance.new("TextButton")
+        toggleTextButton.Font = Enum.Font.GothamBold
+        toggleTextButton.Text = ""
+        toggleTextButton.TextColor3 = Color3.fromRGB(214, 214, 214)
+        toggleTextButton.TextSize = 13
+        toggleTextButton.AutoButtonColor = false
+        toggleTextButton.BackgroundTransparency = 1
+        toggleTextButton.Size = UDim2.fromOffset(225, 38)
+        toggleTextButton.Parent = toggle
+
+        local toggleTextLabel = Instance.new("TextLabel")
+        toggleTextLabel.Font = Enum.Font.GothamBold
+        toggleTextLabel.Text = Info.Text
+        toggleTextLabel.TextColor3 = Color3.fromRGB(214, 214, 214)
+        toggleTextLabel.TextSize = 13
+        toggleTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+        toggleTextLabel.BackgroundTransparency = 1
+        toggleTextLabel.Position = UDim2.fromScale(0.0489, 0)
+        toggleTextLabel.Size = UDim2.fromOffset(214, 38)
+        toggleTextLabel.Parent = toggle
+
+        local outerFrame = Instance.new("Frame")
+        outerFrame.BackgroundColor3 = Color3.fromRGB(62, 62, 62)
+        outerFrame.BorderSizePixel = 0
+        outerFrame.Position = UDim2.fromScale(0.782, 0.263)
+        outerFrame.Size = UDim2.fromOffset(38, 17)
+        outerFrame.Parent = toggle
+
+        local uICorner1 = Instance.new("UICorner")
+        uICorner1.CornerRadius = UDim.new(1, 0)
+        uICorner1.Parent = outerFrame
+
+        local innerFrame = Instance.new("ImageLabel")
+        innerFrame.Image = "rbxassetid://your_asset_id_here" -- Replace with your image ID
+        innerFrame.BackgroundTransparency = 1
+        innerFrame.Position = Info.Default and UDim2.new(0, 22, 0, 2) or UDim2.new(0, 3, 0, 2)
+        innerFrame.Size = UDim2.fromOffset(13, 13)
+        innerFrame.Parent = outerFrame
+
+        -- Apply initial state
+        pcall(Info.Callback, Info.Default)
+        outerFrame.BackgroundColor3 = Info.Default and Library.DefaultColor or Color3.fromRGB(62, 62, 62)
+
+        toggle.MouseEnter:Connect(function()
+            fixLineToggle.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+            toggle.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
         end)
+
+        toggle.MouseLeave:Connect(function()
+            fixLineToggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
+            toggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
+        end)
+
+        function insidetoggle:Set(ToggleInfo)
+            ToggleInfo.Bool = ToggleInfo.Bool or false
+            Toggled = ToggleInfo.Bool
+            Library.Flags[Info.Flag] = ToggleInfo.Bool
+
+            pcall(Info.Callback, ToggleInfo.Bool)
+            TweenService:Create(innerFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+                Position = ToggleInfo.Bool and UDim2.new(0, 22, 0, 2) or UDim2.new(0, 3, 0, 2)
+            }):Play()
+            TweenService:Create(outerFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+                BackgroundColor3 = ToggleInfo.Bool and Library.DefaultColor or Color3.fromRGB(62, 62, 62)
+            }):Play()
+        end
+
+        toggleTextButton.MouseButton1Click:Connect(function()
+            Toggled = not Toggled
+            Library.Flags[Info.Flag] = Toggled
+            pcall(Info.Callback, Toggled)
+            TweenService:Create(innerFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+                Position = Toggled and UDim2.new(0, 22, 0, 2) or UDim2.new(0, 3, 0, 2)
+            }):Play()
+            TweenService:Create(outerFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+                BackgroundColor3 = Toggled and Library.DefaultColor or Color3.fromRGB(62, 62, 62)
+            }):Play()
+        end)
+
+        return insidetoggle
     end
 
     return window
