@@ -1,55 +1,39 @@
-local Library = {
-    Flags = {},
-    DefaultColor = Color3.fromRGB(0, 170, 255)  -- Customize as needed
-}
-local TweenService = game:GetService("TweenService") -- Ensure TweenService is referenced
+local TweenService = game:GetService("TweenService")
+
+local Library = {}
+Library.Flags = {}
+Library.DefaultColor = Color3.fromRGB(0, 170, 255)
 
 function Library:CreateWindow(name)
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = name
-    ScreenGui.Parent = game.CoreGui
-
-    local Frame = Instance.new("Frame")
-    Frame.Parent = ScreenGui
-    Frame.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-    Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
-    Frame.BorderSizePixel = 2
-    Frame.Position = UDim2.new(0.378543168, 0, 0.209876537, 0)
-    Frame.Size = UDim2.new(0, 493, 0, 358)
-    Frame.Active = true
-    Frame.Draggable = true
-
-    local TextLabel = Instance.new("TextLabel")
-    TextLabel.Parent = Frame
-    TextLabel.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-    TextLabel.BorderSizePixel = 0
-    TextLabel.Size = UDim2.new(0, 493, 0, 50)
-    TextLabel.Font = Enum.Font.Arial
-    TextLabel.Text = name
-    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TextLabel.TextScaled = true
-    TextLabel.TextSize = 14.000
-    TextLabel.TextStrokeTransparency = 0.000
-    TextLabel.TextWrapped = true
-
-    local closeButton = Instance.new("TextButton")
-    closeButton.Parent = Frame
-    closeButton.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-    closeButton.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    closeButton.Position = UDim2.new(0.916279852, 0, 0.0124767423, 0)
-    closeButton.Size = UDim2.new(0, 35, 0, 41)
-    closeButton.Font = Enum.Font.Arial
-    closeButton.Text = "X"
-    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    closeButton.TextScaled = true
-    closeButton.TextSize = 29.000
-    closeButton.TextStrokeTransparency = 0.000
-    closeButton.TextWrapped = true
-    closeButton.MouseButton1Click:Connect(function()
-        Frame.Visible = false
-    end)
-
     local window = {}
+    local currentYPosition = 50 -- Starting Y position, adjusted based on the title height
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "Skid's GUI"
+    screenGui.Parent = game.CoreGui
+
+    local frame = Instance.new("Frame")
+    frame.Name = "MainFrame"
+    frame.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+    frame.BorderSizePixel = 0
+    frame.Position = UDim2.new(0.3, 0, 0.3, 0)
+    frame.Size = UDim2.new(0, 250, 0, 400) -- Adjust size as needed
+    frame.Parent = screenGui
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Name = "TitleLabel"
+    titleLabel.Text = name
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextSize = 16
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Position = UDim2.new(0, 10, 0, 10)
+    titleLabel.Size = UDim2.new(1, -20, 0, 30) -- Adjust size as needed
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.Parent = frame
+
+    currentYPosition = currentYPosition + titleLabel.Size.Y.Offset + 10 -- Adjust Y position for the next element
+
     function window:Toggle(Info)
         Info.Text = Info.Text or "Toggle"
         Info.Flag = Info.Flag or Info.Text
@@ -57,38 +41,26 @@ function Library:CreateWindow(name)
         Info.Callback = Info.Callback or function() end
 
         local insidetoggle = {}
+
         Library.Flags[Info.Flag] = Info.Default
 
         local Toggled = Info.Default
-
+        
         local toggle = Instance.new("Frame")
         toggle.Name = "Toggle"
         toggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
         toggle.Size = UDim2.fromOffset(225, 38)
-        toggle.Parent = Frame
+        toggle.Position = UDim2.new(0, 10, 0, currentYPosition)
+        toggle.Parent = frame
+
+        currentYPosition = currentYPosition + toggle.Size.Y.Offset + 5 -- Update Y position for the next toggle
 
         local uICorner = Instance.new("UICorner")
         uICorner.CornerRadius = UDim.new(0, 4)
         uICorner.Parent = toggle
 
-        local fixLineToggle = Instance.new("Frame")
-        fixLineToggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
-        fixLineToggle.BorderSizePixel = 0
-        fixLineToggle.Position = UDim2.fromScale(0.5, 0.0526)
-        fixLineToggle.Size = UDim2.fromOffset(225, 4)
-        fixLineToggle.Parent = toggle
-
-        local toggleTextButton = Instance.new("TextButton")
-        toggleTextButton.Font = Enum.Font.GothamBold
-        toggleTextButton.Text = ""
-        toggleTextButton.TextColor3 = Color3.fromRGB(214, 214, 214)
-        toggleTextButton.TextSize = 13
-        toggleTextButton.AutoButtonColor = false
-        toggleTextButton.BackgroundTransparency = 1
-        toggleTextButton.Size = UDim2.fromOffset(225, 38)
-        toggleTextButton.Parent = toggle
-
         local toggleTextLabel = Instance.new("TextLabel")
+        toggleTextLabel.Name = "ToggleTextLabel"
         toggleTextLabel.Font = Enum.Font.GothamBold
         toggleTextLabel.Text = Info.Text
         toggleTextLabel.TextColor3 = Color3.fromRGB(214, 214, 214)
@@ -96,13 +68,14 @@ function Library:CreateWindow(name)
         toggleTextLabel.TextXAlignment = Enum.TextXAlignment.Left
         toggleTextLabel.BackgroundTransparency = 1
         toggleTextLabel.Position = UDim2.fromScale(0.0489, 0)
-        toggleTextLabel.Size = UDim2.fromOffset(214, 38)
+        toggleTextLabel.Size = UDim2.fromOffset(180, 38)
         toggleTextLabel.Parent = toggle
 
         local outerFrame = Instance.new("Frame")
+        outerFrame.Name = "OuterFrame"
         outerFrame.BackgroundColor3 = Color3.fromRGB(62, 62, 62)
         outerFrame.BorderSizePixel = 0
-        outerFrame.Position = UDim2.fromScale(0.782, 0.263)
+        outerFrame.Position = UDim2.fromScale(0.82, 0.26)
         outerFrame.Size = UDim2.fromOffset(38, 17)
         outerFrame.Parent = toggle
 
@@ -111,25 +84,17 @@ function Library:CreateWindow(name)
         uICorner1.Parent = outerFrame
 
         local innerFrame = Instance.new("ImageLabel")
-        innerFrame.Image = "rbxassetid://your_asset_id_here" -- Replace with your image ID
+        innerFrame.Name = "InnerFrame"
+        innerFrame.Image = "rbxassetid://... (your image ID here)"
+        innerFrame.ResampleMode = "Pixelated"
+        innerFrame.ImageColor3 = Color3.fromRGB(255, 255, 255)
         innerFrame.BackgroundTransparency = 1
         innerFrame.Position = Info.Default and UDim2.new(0, 22, 0, 2) or UDim2.new(0, 3, 0, 2)
         innerFrame.Size = UDim2.fromOffset(13, 13)
         innerFrame.Parent = outerFrame
 
-        -- Apply initial state
         pcall(Info.Callback, Info.Default)
         outerFrame.BackgroundColor3 = Info.Default and Library.DefaultColor or Color3.fromRGB(62, 62, 62)
-
-        toggle.MouseEnter:Connect(function()
-            fixLineToggle.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
-            toggle.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
-        end)
-
-        toggle.MouseLeave:Connect(function()
-            fixLineToggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
-            toggle.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
-        end)
 
         function insidetoggle:Set(ToggleInfo)
             ToggleInfo.Bool = ToggleInfo.Bool or false
@@ -145,16 +110,11 @@ function Library:CreateWindow(name)
             }):Play()
         end
 
-        toggleTextButton.MouseButton1Click:Connect(function()
+        toggleTextLabel.MouseButton1Click:Connect(function()
             Toggled = not Toggled
             Library.Flags[Info.Flag] = Toggled
             pcall(Info.Callback, Toggled)
-            TweenService:Create(innerFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
-                Position = Toggled and UDim2.new(0, 22, 0, 2) or UDim2.new(0, 3, 0, 2)
-            }):Play()
-            TweenService:Create(outerFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
-                BackgroundColor3 = Toggled and Library.DefaultColor or Color3.fromRGB(62, 62, 62)
-            }):Play()
+            insidetoggle:Set({ Bool = Toggled })
         end)
 
         return insidetoggle
